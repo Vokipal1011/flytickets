@@ -1,20 +1,34 @@
 package ru.flytickets;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
+
 import static java.util.Map.Entry;
+import static ru.flytickets.WriteInFile.writeInFile;
 
 public class MinFlightTimeByCarrier {
 
-    public static void printSortedByMinTime(List<Ticket> tickets, String origin, String destination) {
+    public static void printSortedByMinTime(List<Ticket> tickets, String origin, String destination) throws IOException {
         Map<String, Duration> map = minFlightTimeByCarrier(tickets, origin, destination);
 
-        System.out.println("Минимальное время полёта между " + origin + " и " + destination + " для каждого перевозчика составляет:");
+        String header = String.format(
+                "Минимальное время полёта между %s и %s для каждого перевозчика составляет:", origin, destination);
+        StringBuilder sb = new StringBuilder();
+        sb.append(header).append(System.lineSeparator());
+
+        System.out.println(header);
         map.entrySet().stream()
                 .sorted(Comparator.comparing(Entry<String, Duration>::getValue)
                         .thenComparing(Entry::getKey))
-                .forEach(e -> System.out.printf("%s = %s%n", e.getKey(), formatDurationSmart(e.getValue())));
+                .forEach(e -> {
+                    String line = String.format("%s = %s", e.getKey(), formatDurationSmart(e.getValue()));
+                    System.out.println(line);
+                    sb.append(line).append(System.lineSeparator());
+                });
+
+        writeInFile(sb, false);
     }
 
     public static Map<String, Duration> minFlightTimeByCarrier(List<Ticket> tickets, String origin, String destination) {

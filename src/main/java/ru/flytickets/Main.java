@@ -11,6 +11,7 @@ import java.util.List;
 
 
 import static ru.flytickets.MinFlightTimeByCarrier.printSortedByMinTime;
+import static ru.flytickets.PriceStats.printMeanMedianDiff;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -27,6 +28,6 @@ public class Main {
         List<Ticket> tickets = wrapper.getTickets();
 
         printSortedByMinTime(tickets, "VVO", "TLV");
-        PriceStats.printMeanMedianDiff(tickets, "VVO", "TLV");
+        printMeanMedianDiff(tickets, "VVO", "TLV");
     }
 }

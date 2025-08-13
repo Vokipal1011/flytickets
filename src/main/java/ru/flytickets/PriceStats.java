@@ -1,26 +1,42 @@
 package ru.flytickets;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class PriceStats {
+import static ru.flytickets.WriteInFile.writeInFile;
 
-    private PriceStats() {}
+public class PriceStats {
 
-    public static void printMeanMedianDiff(List<Ticket> tickets, String origin, String destination) {
-        OptionalDouble mean = meanPrice(tickets, origin, destination);
+    public static void printMeanMedianDiff(List<Ticket> tickets, String origin, String destination) throws IOException {
+        OptionalDouble mean   = meanPrice(tickets, origin, destination);
         OptionalDouble median = medianPrice(tickets, origin, destination);
-        OptionalDouble diff = meanMinusMedian(tickets, origin, destination);
+        OptionalDouble diff   = meanMinusMedian(tickets, origin, destination);
+
+        String lineSep = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
 
         if (mean.isEmpty()) {
-            System.out.println("По направлению " + origin + " → " + destination + " билетов не найдено.");
+            String msg = "По направлению " + origin + " → " + destination + " билетов не найдено." + lineSep;
+            System.out.print(msg);
+            writeInFile(new StringBuilder(msg), true);
             return;
         }
-        System.out.printf(
-                Locale.ROOT,
-                "Средняя цена: %.0f%nМедиана: %.0f%nРазница (средняя − медиана): %.0f%n",
-                mean.getAsDouble(), median.getAsDouble(), diff.orElse(0)
-        );
+
+        String header = String.format("Статистика цен по направлению %s → %s:%n", origin, destination);
+        System.out.print(header);
+        sb.append(header);
+
+        String meanStr   = String.format(Locale.ROOT, "Средняя цена: %.0f%n", mean.getAsDouble());
+        String medianStr = String.format(Locale.ROOT, "Медиана: %.0f%n",  median.getAsDouble());
+        String diffStr   = String.format(Locale.ROOT, "Разница (средняя − медиана): %.0f%n", diff.orElse(0));
+
+        System.out.print(meanStr);
+        System.out.print(medianStr);
+        System.out.print(diffStr);
+
+        sb.append(meanStr).append(medianStr).append(diffStr);
+        writeInFile(sb, true);
     }
 
     public static OptionalDouble meanPrice(List<Ticket> tickets, String origin, String destination) {
