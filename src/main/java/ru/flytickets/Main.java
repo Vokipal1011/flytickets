@@ -7,10 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
-import static ru.flytickets.JsonFinder.jsonFinder;
+
 import static ru.flytickets.MinFlightTimeByCarrier.printSortedByMinTime;
 
 public class Main {
